@@ -14,7 +14,10 @@ export default function App() {
   const [stage, setStage] = useState('idle');
   const [selectedPreset, setSelectedPreset] = useState('bottom');
   const [rendering, setRendering] = useState(false);
-
+  const presets = [
+    { value: 'bottom', label: 'Bottom' },
+    { value: 'top', label: 'Top' }
+  ];
 
   const onFileChange = useCallback((e) => {
     const file = e.target.files?.[0];
@@ -39,14 +42,14 @@ export default function App() {
     setUploading(true);
     setStage('loading');
     setError(null);
-    try{
-      const res = await fetch(BACKEND_URL, {method: 'POST', body: form});
+    try {
+      const res = await fetch(BACKEND_URL, { method: 'POST', body: form });
       if (!res.ok) {
         const t = await res.text();
         throw new Error(`Transcription failed: ${res.status} ${t}`);
       }
       const json = await res.json();
-      setResult({text: json.text || '', words: json.words || []});
+      setResult({ text: json.text || '', words: json.words || [] });
       if (json.videoUrl) {
         setServerVideoUrl(json.videoUrl);
       }
@@ -86,69 +89,67 @@ export default function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           preset: selectedPreset,
-          words: result.words || [],
-          videoUrl: previewSrc,
-        }),
-      });
-      if (!res.ok) {
-        const t = await res.text();
-        throw new Error(`Render failed: ${res.status} ${t}`);
-      }
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'captioned.mp4';
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      setError(e?.message || 'Failed to render MP4');
-    } finally {
-      setRendering(false);
-    }
-  }, [selectedPreset, result.words, previewSrc]);
-
-  return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      {stage !== 'ready' && (
-        <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8 text-center">
-          <h1 className="text-3xl font-bold mb-2 text-indigo-600">Caption Generator</h1>
-          <p className="text-gray-600 mb-6">Upload your MP4 and auto-generate Hinglish-friendly captions.</p>
-  
-          <label className="w-full cursor-pointer border-2 border-dashed border-indigo-400 rounded-xl p-10 hover:bg-indigo-50 transition">
-            <input type="file" accept="video/mp4" onChange={onFileChange} hidden />
-            <span className="text-lg text-indigo-500">Click or Drag & Drop your MP4</span>
-          </label>
-  
-          <button
-            className="mt-6 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg disabled:opacity-50"
-            onClick={onGenerate}
-            disabled={!fileBlob || uploading}
-          >
-            {uploading || stage === 'loading' ? ' Processing…' : ' Auto-generate captions'}
-          </button>
-  
-          {error && <div className="mt-4 text-red-500">{error}</div>}
-        </div>
-      )}
-  
-      {stage === 'ready' && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mt-8">
-          {/* Left panel */}
-          <div className="col-span-1 bg-white rounded-xl shadow-lg p-6 space-y-4">
-            <h2 className="text-xl font-bold mb-4">Controls</h2>
-            <label className="block text-sm font-medium text-gray-700">Caption style</label>
-            <select
-              value={selectedPreset}
-              onChange={(e) => setSelectedPreset(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 focus:ring-indigo-500"
-            >
-              <option value="bottom">Bottom</option>
-              <option value="top">Top</option>
-              <option value="karaoke">Karaoke</option>
-            </select>
-  
-            <div className="space-y-3">
+          return (
+            <div className="app-root">
+              <div className="hero">
+                <div className="hero-card">
+                  <h1 className="brand">Remotion Demo: Captions</h1>
+                  <p className="subtitle">Upload a video and generate captions using AI.</p>
+                  <div className="form-group">
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={onFileChange}
+                      className="input-file"
+                    />
+                    <button
+                      className="accent-btn"
+                      onClick={onGenerate}
+                      disabled={uploading || !fileBlob}
+                    >
+                      {uploading ? 'Transcribing...' : 'Generate Captions'}
+                    </button>
+                  </div>
+                  {error && (
+                    <div className="error-msg">{error}</div>
+                  )}
+                  {result.text && (
+                    <div className="success-msg">Captions generated!</div>
+                  )}
+                  <div className="form-group">
+                    <label className="preset-label">Preset:</label>
+                    <select
+                      value={selectedPreset}
+                      onChange={e => setSelectedPreset(e.target.value)}
+                      className="preset-select"
+                    >
+                      {presets.map(p => (
+                        <option key={p.value} value={p.value}>{p.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {videoSrc && (
+                    <div className="video-preview">
+                      <video src={videoSrc} controls className="video-player" />
+                    </div>
+                  )}
+                  {result.words.length > 0 && (
+                    <div className="player-preview">
+                      <Player
+                        component={Captions}
+                        durationInFrames={300}
+                        fps={30}
+                        compositionWidth={720}
+                        compositionHeight={480}
+                        style={{width: 720, height: 480, borderRadius: 16, boxShadow: '0 4px 24px rgba(0,0,0,0.4)'}}
+                        props={{words: result.words, preset: selectedPreset, videoSrc}}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
               <button className="w-full bg-gray-200 rounded-lg px-4 py-2 hover:bg-gray-300" onClick={downloadSrt}>
                 Download SRT
               </button>
@@ -164,8 +165,6 @@ export default function App() {
               </button>
             </div>
           </div>
-  
-          {/* Right panel */}
           <div className="col-span-2 bg-white rounded-xl shadow-lg p-6 flex flex-col">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-semibold">Preview</h2>
