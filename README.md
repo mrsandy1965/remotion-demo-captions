@@ -6,7 +6,7 @@ A simple Speech-to-Text pipeline with:
 
 Key paths:
 - Backend: `backend/`
-- Frontend: `frontend/remotion-caption-demo/`
+- Frontend: `frontend/`
 
 ---
 
@@ -30,10 +30,6 @@ Key paths:
      // const ASSEMBLY_API_KEY = process.env.ASSEMBLY_API_KEY; // use this
      // const ASSEMBLY_API_KEY = "..."; // avoid hardcoding
      ```
-   - Export the key in your shell before starting the server:
-     ```bash
-     export ASSEMBLY_API_KEY=YOUR_ASSEMBLYAI_API_KEY
-     ```
 
 3. **Start the server**
    ```bash
@@ -43,35 +39,12 @@ Key paths:
    ```
    The server runs at `http://localhost:3001`.
 
-### Test transcription via curl
-Send an `.mp4` (or audio) file as `video` form field to `/transcribe`.
-
-```bash
-curl -X POST \
-  -F "video=@/absolute/path/to/video.mp4" \
-  http://localhost:3001/transcribe
-```
-
-Expected JSON:
-```json
-{
-  "text": "... full transcript ...",
-  "words": [
-    { "start": 120, "end": 450, "text": "Hello" },
-    { "start": 460, "end": 800, "text": "world" }
-  ]
-}
-```
-
-> Note: `start`/`end` are in milliseconds.
-
----
 
 ## Frontend Setup (`frontend/remotion-caption-demo/`)
 
 1. **Install dependencies**
    ```bash
-   cd frontend/remotion-caption-demo
+   cd frontend/
    npm install
    ```
 
@@ -85,18 +58,7 @@ Expected JSON:
 
 ## How to Preview Captions
 
-There are two ways:
-
-- **A) Using Remotion Studio input props**
-  1. Start the backend (`http://localhost:3001`).
-  2. Start the frontend Studio (`npm run dev`).
-  3. Select the `CaptionDemo` composition.
-  4. In the right-side panel, edit `inputProps`:
-     - `videoSrc`: A local or remote video URL. In the browser, a local file can be dropped somewhere that serves it, or use a public URL.
-     - `preset`: one of `bottom`, `top`, `karaoke`.
-     - `words`: Paste the `words` array from the backend response.
-
-- **B) Using the upload UI (`PlayerApp.jsx`)**
+- **A) Using the upload UI (`PlayerApp.jsx`)**
   - `src/PlayerApp.jsx` is a convenience UI component that:
     - Lets you upload an `.mp4`,
     - Sends it to `POST http://localhost:3001/transcribe`,

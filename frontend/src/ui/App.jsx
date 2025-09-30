@@ -4,7 +4,6 @@ import {Captions} from '../components/Captions.jsx';
 import {wordsToSrt} from '../utils/srt.js';
 
 const BACKEND_URL = 'http://localhost:3001/transcribe';
-
 export default function App() {
   const [fileBlob, setFileBlob] = useState(null);
   const [videoSrc, setVideoSrc] = useState(null);
@@ -12,9 +11,10 @@ export default function App() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState({text: '', words: []});
-  const [stage, setStage] = useState('idle'); // idle | loading | ready
+  const [stage, setStage] = useState('idle');
   const [selectedPreset, setSelectedPreset] = useState('bottom');
   const [rendering, setRendering] = useState(false);
+
 
   const onFileChange = useCallback((e) => {
     const file = e.target.files?.[0];
@@ -28,6 +28,7 @@ export default function App() {
     setStage('idle');
   }, []);
 
+
   const onGenerate = useCallback(async () => {
     if (!fileBlob) {
       setError('Please upload a video first.');
@@ -38,7 +39,7 @@ export default function App() {
     setUploading(true);
     setStage('loading');
     setError(null);
-    try {
+    try{
       const res = await fetch(BACKEND_URL, {method: 'POST', body: form});
       if (!res.ok) {
         const t = await res.text();
@@ -46,17 +47,15 @@ export default function App() {
       }
       const json = await res.json();
       setResult({text: json.text || '', words: json.words || []});
-      // Prefer server-accessible URL for both preview and rendering
       if (json.videoUrl) {
         setServerVideoUrl(json.videoUrl);
       }
-      setStage('ready');
-    } catch (err) {
+      setStage('ready');}
+      catch (err) {
       setError(err?.message || 'Unknown error');
-      setStage('idle');
-    } finally {
-      setUploading(false);
-    }
+      setStage('idle');} 
+      finally {
+      setUploading(false);}
   }, [fileBlob]);
 
   const previewSrc = serverVideoUrl || videoSrc;
@@ -77,20 +76,6 @@ export default function App() {
     }
   }, [result.words]);
 
-  const downloadPropsJson = useCallback(() => {
-    try {
-      const json = JSON.stringify({videoSrc: previewSrc, preset: selectedPreset, words: result.words || []}, null, 2);
-      const blob = new Blob([json], {type: 'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'props.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      setError('Failed to export props.json');
-    }
-  }, [previewSrc, selectedPreset, result.words]);
 
   const downloadMp4 = useCallback(async () => {
     try {
@@ -127,12 +112,12 @@ export default function App() {
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
       {stage !== 'ready' && (
         <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8 text-center">
-          <h1 className="text-3xl font-bold mb-2 text-indigo-600">🎬 Caption Generator</h1>
+          <h1 className="text-3xl font-bold mb-2 text-indigo-600">Caption Generator</h1>
           <p className="text-gray-600 mb-6">Upload your MP4 and auto-generate Hinglish-friendly captions.</p>
   
           <label className="w-full cursor-pointer border-2 border-dashed border-indigo-400 rounded-xl p-10 hover:bg-indigo-50 transition">
             <input type="file" accept="video/mp4" onChange={onFileChange} hidden />
-            <span className="text-lg text-indigo-500">📂 Click or Drag & Drop your MP4</span>
+            <span className="text-lg text-indigo-500">Click or Drag & Drop your MP4</span>
           </label>
   
           <button
@@ -140,7 +125,7 @@ export default function App() {
             onClick={onGenerate}
             disabled={!fileBlob || uploading}
           >
-            {uploading || stage === 'loading' ? '⏳ Processing…' : '⚡ Auto-generate captions'}
+            {uploading || stage === 'loading' ? ' Processing…' : ' Auto-generate captions'}
           </button>
   
           {error && <div className="mt-4 text-red-500">{error}</div>}
@@ -151,7 +136,7 @@ export default function App() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mt-8">
           {/* Left panel */}
           <div className="col-span-1 bg-white rounded-xl shadow-lg p-6 space-y-4">
-            <h2 className="text-xl font-bold mb-4">⚙ Controls</h2>
+            <h2 className="text-xl font-bold mb-4">Controls</h2>
             <label className="block text-sm font-medium text-gray-700">Caption style</label>
             <select
               value={selectedPreset}
@@ -165,17 +150,17 @@ export default function App() {
   
             <div className="space-y-3">
               <button className="w-full bg-gray-200 rounded-lg px-4 py-2 hover:bg-gray-300" onClick={downloadSrt}>
-                📥 Download SRT
+                Download SRT
               </button>
               <button
                 className="w-full bg-indigo-600 text-white rounded-lg px-4 py-2 hover:bg-indigo-700 disabled:opacity-50"
                 onClick={downloadMp4}
                 disabled={!result.words?.length || rendering}
               >
-                {rendering ? '⏳ Rendering…' : '🎬 Download MP4'}
+                {rendering ? ' Rendering…' : ' Download MP4'}
               </button>
               <button className="w-full bg-gray-200 rounded-lg px-4 py-2 hover:bg-gray-300" onClick={downloadPropsJson}>
-                ⚙ Export props.json
+                 Export props.json
               </button>
             </div>
           </div>
@@ -183,7 +168,7 @@ export default function App() {
           {/* Right panel */}
           <div className="col-span-2 bg-white rounded-xl shadow-lg p-6 flex flex-col">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-lg font-semibold">🎥 Preview</h2>
+              <h2 className="text-lg font-semibold">Preview</h2>
               <span className="text-sm text-gray-500">{fileBlob?.name || 'video.mp4'}</span>
             </div>
             <div className="rounded-lg overflow-hidden shadow-md">
@@ -199,7 +184,7 @@ export default function App() {
             </div>
   
             <div className="mt-4">
-              <h3 className="text-md font-semibold mb-2">📝 Transcript</h3>
+              <h3 className="text-md font-semibold mb-2"> Transcript</h3>
               <div className="bg-gray-50 rounded-lg p-3 h-40 overflow-y-auto text-sm text-gray-700">
                 {result.text || 'No transcript available'}
               </div>

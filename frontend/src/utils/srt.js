@@ -1,5 +1,4 @@
-// Convert milliseconds to SRT timestamp HH:MM:SS,mmm
-const msToSrt = (ms) => {
+const millisToSrt = (ms) => {
   const sign = ms < 0 ? '-' : '';
   const abs = Math.max(0, Math.floor(Math.abs(ms)));
   const h = Math.floor(abs / 3600000);
@@ -10,9 +9,7 @@ const msToSrt = (ms) => {
   const pad3 = (n) => String(n).padStart(3, '0');
   return `${sign}${pad2(h)}:${pad2(m)}:${pad2(s)},${pad3(msPart)}`;
 };
-
-// Parse SRT timestamp HH:MM:SS,mmm to milliseconds
-const srtToMs = (ts) => {
+const srtToMillis = (ts) => {
   const m = ts.trim().match(/^(?<h>\d{2}):(?<m>\d{2}):(?<s>\d{2}),(?<ms>\d{3})$/);
   if (!m || !m.groups) return 0;
   const h = Number(m.groups.h) || 0;
@@ -20,9 +17,7 @@ const srtToMs = (ts) => {
   const s = Number(m.groups.s) || 0;
   const ms = Number(m.groups.ms) || 0;
   return h * 3600000 + mi * 60000 + s * 1000 + ms;
-};
-
-export const wordsToSrt = (words = []) => {
+};export const wordsToSrt = (words = []) => {
   const lines = [];
   for (let i = 0; i < words.length; i++) {
     const w = words[i];
@@ -30,12 +25,12 @@ export const wordsToSrt = (words = []) => {
     const end = typeof w.end === 'number' ? w.end : start + 1;
     const text = (w.text ?? '').toString();
     lines.push(String(i + 1));
-    lines.push(`${msToSrt(start)} --> ${msToSrt(end)}`);
+    lines.push(`${millisToSrt(start)} --> ${millisToSrt(end)}`);
     lines.push(text);
-    lines.push('');
-  }
-  return lines.join('\n');
-};
+    lines.push('');}
+  return lines.join('\n');};
+
+
 
 export const srtToWords = (srtText = '') => {
   const blocks = srtText.replace(/\r/g, '').split(/\n\s*\n/);
@@ -49,8 +44,8 @@ export const srtToWords = (srtText = '') => {
     const timeLine = lines[timeLineIdx];
     const timeMatch = timeLine.match(/(?<start>\d{2}:\d{2}:\d{2},\d{3})\s*-->\s*(?<end>\d{2}:\d{2}:\d{2},\d{3})/);
     if (!timeMatch || !timeMatch.groups) continue;
-    const startMs = srtToMs(timeMatch.groups.start);
-    const endMs = srtToMs(timeMatch.groups.end);
+    const startMs = srtToMillis(timeMatch.groups.start);
+    const endMs = srtToMillis(timeMatch.groups.end);
     if (!(endMs > startMs)) continue;
     const textLines = lines.slice(timeLineIdx + 1);
     const subtitle = textLines.join(' ').trim();
@@ -65,10 +60,9 @@ export const srtToWords = (srtText = '') => {
         const s = Math.round(startMs + i * per);
         const e = Math.round(i === tokens.length - 1 ? endMs : startMs + (i + 1) * per);
         words.push({start: s, end: e, text: tokens[i]});
-      }
-    }
-  }
-  return words;
+      }}}return words;
 };
+
+
 
 export default {wordsToSrt, srtToWords};

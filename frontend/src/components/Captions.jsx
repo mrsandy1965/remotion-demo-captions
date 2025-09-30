@@ -1,15 +1,9 @@
 import React, {useMemo} from 'react';
 import {AbsoluteFill, Video, useCurrentFrame, useVideoConfig} from 'remotion';
-
-// Props: { words: Array<{start:number; end:number; text:string}>, preset: 'bottom'|'top'|'karaoke', videoSrc: string|null }
 export const Captions = ({words = [], preset = 'bottom', videoSrc = null}) => {
   const frame = useCurrentFrame();
   const {fps, width} = useVideoConfig();
-
-  // Time in milliseconds for current frame
   const tMs = (frame / fps) * 1000;
-
-  // Find the active word index based on tMs
   const activeIndex = useMemo(() => {
     if (!words?.length) return -1;
     for (let i = 0; i < words.length; i++) {
@@ -19,7 +13,7 @@ export const Captions = ({words = [], preset = 'bottom', videoSrc = null}) => {
     return -1;
   }, [tMs, words]);
 
-  // Caption line to display around the active word
+
   const surroundingWords = useMemo(() => {
     if (!words?.length || activeIndex < 0) return [];
     const start = Math.max(0, activeIndex - 6);
@@ -29,7 +23,7 @@ export const Captions = ({words = [], preset = 'bottom', videoSrc = null}) => {
 
   const fontFamily = 'Noto Sans Devanagari, Noto Sans, sans-serif';
 
-  const renderSimpleLine = (position) => {
+  const renderSimple = (position) => {
     const text = surroundingWords.map((w) => w.text).join(' ');
     return (
       <AbsoluteFill
@@ -118,8 +112,8 @@ export const Captions = ({words = [], preset = 'bottom', videoSrc = null}) => {
         </AbsoluteFill>
       )}
 
-      {preset === 'bottom' && renderSimpleLine('bottom')}
-      {preset === 'top' && renderSimpleLine('top')}
+      {preset === 'bottom' && renderSimple('bottom')}
+      {preset === 'top' && renderSimple('top')}
       {preset === 'karaoke' && renderKaraoke()}
     </AbsoluteFill>
   );
