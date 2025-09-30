@@ -40,7 +40,7 @@ Key paths:
    The server runs at `http://localhost:3001`.
 
 
-## Frontend Setup (`frontend/remotion-caption-demo/`)
+## Frontend Setup (`frontend/`)
 
 1. **Install dependencies**
    ```bash

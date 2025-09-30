@@ -1,11 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700;800&family=Noto+Sans+Devanagari:wght@400;700;800&display=swap");
 :root {
   --bg: #0b0b0b;
-  --panel: #151515;
+  --panel: #18181b;
   --card: #111;
   --text: #fff;
   --muted: #a0a0a0;
   --accent: #32e6ff;
+  --error: #ff4d4f;
+  --success: #32ffb6;
+  --input-bg: #222;
+  --input-border: #333;
+  --input-focus: #32e6ff;
 }
 * {
   box-sizing: border-box;
@@ -22,11 +27,13 @@ body {
   font-family: "Noto Sans Devanagari", "Noto Sans", system-ui, -apple-system,
     Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-size: 18px;
 }
 .app-root {
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  background: linear-gradient(120deg, #18181b 0%, #23232a 100%);
 }
 
 .hero {
@@ -40,14 +47,134 @@ body {
   width: min(960px, 100%);
   background: var(--panel);
   border: 1px solid #222;
-  border-radius: 16px;
-  padding: 32px;
+  border-radius: 24px;
+  padding: 40px 32px 32px 32px;
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  transition: box-shadow 0.3s;
+  position: relative;
 }
 .brand {
   font-weight: 800;
   letter-spacing: 0.4px;
+  font-size: 2.2rem;
+  color: var(--accent);
+  margin-bottom: 8px;
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 24px;
+  font-size: 1.1rem;
+}
+
+.form-group {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.input-file {
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.input-file:focus {
+  border-color: var(--input-focus);
+}
+
+.accent-btn {
+  background: var(--accent);
+  color: #18181b;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(50,230,255,0.15);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.accent-btn:disabled {
+  background: #444;
+  color: #aaa;
+  cursor: not-allowed;
+}
+.accent-btn:hover:not(:disabled) {
+  background: #32ffb6;
+  box-shadow: 0 4px 16px rgba(50,255,182,0.18);
+}
+
+.preset-label {
+  color: var(--muted);
+  font-weight: 600;
+}
+.preset-select {
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  outline: none;
+}
+.preset-select:focus {
+  border-color: var(--input-focus);
+}
+
+.error-msg {
+  color: var(--error);
+  background: rgba(255,77,79,0.08);
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255,77,79,0.08);
+}
+.success-msg {
+  color: var(--success);
+  background: rgba(50,255,182,0.08);
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-bottom: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(50,255,182,0.08);
+}
+
+.video-preview {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+}
+.video-player {
+  max-width: 480px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+}
+.player-preview {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+}
+.caption-box {
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: rgba(30,30,30,0.7);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  padding: 16px 24px;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+  font-size: 2rem;
+  transition: background 0.3s, box-shadow 0.3s;
+  animation: fadeInCaption 0.5s;
+}
   font-size: 22px;
 }
 .subtitle {

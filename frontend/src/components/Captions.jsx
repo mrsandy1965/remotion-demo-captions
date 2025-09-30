@@ -35,6 +35,7 @@ export const Captions = ({words = [], preset = 'bottom', videoSrc = null}) => {
         }}
       >
         <div
+          className="caption-box"
           style={{
             maxWidth: width - 120,
             color: 'white',
@@ -42,14 +43,23 @@ export const Captions = ({words = [], preset = 'bottom', videoSrc = null}) => {
             lineHeight: 1.2,
             textAlign: 'center',
             textShadow: '0 2px 8px rgba(0,0,0,0.8)',
-            background: position === 'top' ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0.35)',
-            padding: position === 'top' ? '12px 18px' : '10px 16px',
-            borderRadius: position === 'top' ? 0 : 10,
+            background: position === 'top' ? 'rgba(30,30,30,0.7)' : 'rgba(0,0,0,0.5)',
+            padding: position === 'top' ? '16px 24px' : '14px 20px',
+            borderRadius: 16,
             width: position === 'top' ? '100%' : 'auto',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
+            transition: 'background 0.3s, box-shadow 0.3s',
+            animation: 'fadeInCaption 0.5s',
           }}
         >
           {text}
         </div>
+        <style>{`
+          @keyframes fadeInCaption {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
       </AbsoluteFill>
     );
   };
