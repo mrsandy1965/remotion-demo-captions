@@ -3,7 +3,7 @@ import {Player} from '@remotion/player';
 import {Captions} from '../components/Captions.jsx';
 import {wordsToSrt} from '../utils/srt.js';
 
-const BACKEND_URL = 'http://localhost:3001/transcribe';
+const BACKEND_URL = 'http://localhost:3001/';
 export default function App() {
   const [fileBlob, setFileBlob] = useState(null);
   const [videoSrc, setVideoSrc] = useState(null);
